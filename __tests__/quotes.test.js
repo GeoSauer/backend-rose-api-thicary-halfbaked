@@ -2,26 +2,28 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
-const { Quote } = require('../lib/models/Quote');
 
 describe('quotes routes', () => {
   beforeEach(() => {
     return setup(pool);
   });
 
-  it.skip('should add a new quote', async () => {
-    const quote = new Quote({
-      episode_id: '6',
-      character_id: '6',
+  it('POST /quotes should add a new quote', async () => {
+    const newQuote = {
+      episodeId: '6',
+      characterId: '3',
       detail:
         'Okay, I have never heard someone say so many wrong things, one after the other, consecutively, in a row.',
-    });
-    const res = await request(app).post('/quotes').send(quote);
-    expect(res.body.episode_id).toEqual(quote.episode_id);
-    expect(res.body.character_id).toEqual(quote.character_id);
-    expect(res.body.detail).toEqual(quote.detail);
-    const count = await Quote.count();
-    expect(count).toEqual(10);
+    };
+    const resp = await request(app).post('/quotes').send(newQuote);
+    expect(resp.body).toMatchInlineSnapshot(`
+      Object {
+        "characterId": "3",
+        "detail": "Okay, I have never heard someone say so many wrong things, one after the other, consecutively, in a row.",
+        "episodeId": "6",
+        "id": "10",
+      }
+    `);
   });
 
   afterAll(() => {
